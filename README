@@ -1,0 +1,11 @@
+Study the impact of vibrational excitation on dissociative chemisorption of H2 and CH4 on Ni surfaces.
+
+LAMMPS and PLUMED inputs are provided. The <mol>-base dirs contain sample inputs needed to 
+(1) sample the probability distribution p(u) of a mode of interest at high Tvib and 
+(2) parametrize a bias potential V(u) that enforces p(u) at a low gas temperature Tbg.
+The <mol>-diss dirs contain sample inputs to calculate a free energy surface for dissociative 
+chemisorption of each mol/surface combination. Note that the precise definition of the reaction 
+coordinate \chi is slightly different in each situation. For H2 @ Ni(111), also an input showing 
+how to apply V(u) is provided.
+
+Any files that may be missing to run LAMMPS should be provided in the data/ dir.

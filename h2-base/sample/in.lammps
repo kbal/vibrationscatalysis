@@ -1,0 +1,48 @@
+units           real
+
+boundary        p p p
+
+atom_style      charge
+atom_modify     map array
+atom_modify     sort 0 0.0
+
+variable        a equal 1.0
+lattice         sc $a
+
+region          total block -10 10 -10 10 -10 10
+
+create_box      4 total
+
+molecule        h2 h2.txt
+
+create_atoms    0 single 0 0 0 mol h2 45331
+
+pair_style      reax/c NULL
+pair_coeff      * * ffield Ni H C H
+
+mass            1 58.69
+mass            2 1.0
+mass            3 12.0
+mass            4 100.0
+
+neighbor        1.0 bin
+neigh_modify    every 1 delay 5 check yes
+timestep        0.02
+
+variable        t equal 1500
+variable        damp equal 500.0
+
+fix             0 all qeq/reax 1 0.0 10.0 1.0e-6 reax/c
+fix             1 all gle 4 $t $t 485147 a.txt
+fix             2 all plumed plumedfile plumed.inp outfile plumed.out
+
+thermo          10000
+thermo_style    custom step temp pe ke time etotal atoms
+
+dump            1 all xyz 100000 dump.cnt
+dump_modify     1 element Ni H C H
+dump_modify     1 sort id
+
+velocity        all create $t 574321 mom yes rot yes dist gaussian
+
+run             5000000

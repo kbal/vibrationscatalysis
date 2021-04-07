@@ -1,0 +1,41 @@
+units           real
+
+boundary        p p p
+
+atom_style      charge
+atom_modify     map array
+atom_modify     sort 0 0.0
+
+read_data       data.lammps
+
+pair_style      reax/c NULL safezone 1.6
+pair_coeff      * * ffield Ni H C
+
+replicate       2 2 1
+
+molecule        ch4 ch4.txt
+create_atoms    0 single 4.0 4.0 9.0 mol ch4 45331 units box
+
+neighbor        1.0 bin
+neigh_modify    every 1 delay 5 check yes
+timestep        0.1
+variable        t equal 500
+
+region          up block INF INF INF INF 2.0 INF units box
+group           int region up
+
+fix             0 all qeq/reax 1 0.0 10.0 1.0e-6 reax/c
+fix             1 int gle 4 $t $t 481965 a.txt
+fix             2 all plumed plumedfile plumed.inp outfile plumed.out
+
+thermo          10000
+thermo_style    custom step temp pe ke etotal time
+thermo_modify   flush yes
+
+dump            1 all xyz 100000 dump.lammps
+dump_modify     1 element Ni H C
+dump_modify     1 sort id
+
+velocity        all create $t 574321
+
+run             10000000
